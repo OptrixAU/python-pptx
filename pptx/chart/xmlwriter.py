@@ -817,6 +817,21 @@ class _LineChartXmlWriter(_BaseChartXmlWriter):
     def _cat_ax_xml(self):
         categories = self._chart_data.categories
 
+        #Try to find a divisible number of markerrs...
+        sz = len(categories)
+        skipmarks = 1
+        markers = 10
+        if sz > markers:
+            while sz % markers != 0:
+                markers -= 1
+                if markers < 5:
+                    markers = 10
+                    break
+
+            skipmarks = int(len(categories) / markers)
+        if skipmarks < 1:
+            skipmarks = 1
+
         if categories.are_dates:
             return (
                 "      <c:dateAx>\n"
@@ -854,7 +869,9 @@ class _LineChartXmlWriter(_BaseChartXmlWriter):
             '        <c:auto val="1"/>\n'
             '        <c:lblAlgn val="ctr"/>\n'
             '        <c:lblOffset val="100"/>\n'
+            '        <c:tickMarkSkip val="' + str(skipmarks) + '" />'
             '        <c:noMultiLvlLbl val="0"/>\n'
+
             "      </c:catAx>\n"
         )
 
